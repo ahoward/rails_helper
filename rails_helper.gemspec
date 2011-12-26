@@ -9,7 +9,7 @@ Gem::Specification::new do |spec|
   spec.description = "description: rails_helper kicks the ass"
 
   spec.files =
-["README.md", "Rakefile", "lib", "lib/rails_helper.rb"]
+["README.md", "Rakefile", "lib", "lib/rails_helper.rb", "rails_helper.gemspec"]
 
   spec.executables = []
   

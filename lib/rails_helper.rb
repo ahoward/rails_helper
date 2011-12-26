@@ -8,10 +8,20 @@ class Helper
   end
 
 
-  if defined?(Rails)
-    url_helpers = Rails.application.try(:routes).try(:url_helpers)
-    include(url_helpers) if url_helpers
-    include(ActionView::Helpers) if defined?(ActionView::Helpers)
+  if defined?(Rails::Engine)
+
+    class Engine < Rails::Engine
+      config.after_initialize do
+        if defined?(ActionView::Helpers)
+          ::Helper.send(:include, ActionView::Helpers)
+        end
+
+        if defined?(Rails.application.routes.url_helpers)
+          ::Helper.send(:include, Rails.application.routes.url_helpers)
+        end
+      end
+    end
+
   end
 
   def controller
