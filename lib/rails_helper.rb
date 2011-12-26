@@ -1,5 +1,5 @@
 class Helper
-  def Helper.version() '1.0.0' end
+  def Helper.version() '1.1.0' end
 
   def Helper.dependencies
     {
