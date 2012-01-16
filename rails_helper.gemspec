@@ -3,7 +3,7 @@
 
 Gem::Specification::new do |spec|
   spec.name = "rails_helper"
-  spec.version = "1.0.0"
+  spec.version = "1.2.0"
   spec.platform = Gem::Platform::RUBY
   spec.summary = "rails_helper"
   spec.description = "description: rails_helper kicks the ass"
@@ -19,6 +19,8 @@ Gem::Specification::new do |spec|
 
   
     spec.add_dependency(*["rails_current", " >= 1.0"])
+  
+    spec.add_dependency(*["rails_default_url_options", " >= 1.0"])
   
 
   spec.extensions.push(*[])
