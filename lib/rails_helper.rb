@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '1.2.0'
+    '1.2.1'
   end
 
   def Helper.dependencies
