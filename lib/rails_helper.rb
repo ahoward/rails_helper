@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '1.2.1'
+    '1.3.0'
   end
 
   def Helper.dependencies
@@ -78,7 +78,7 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     if defined?(Rails::Engine)
       class Engine < Rails::Engine
         config.after_initialize do
-          Helper.send(:include, Rails.application.routes.url_helpers)
+          Rails.application.routes.install_helpers(Helper)
         end
       end
     end
