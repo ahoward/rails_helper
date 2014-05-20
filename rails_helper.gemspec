@@ -3,10 +3,11 @@
 
 Gem::Specification::new do |spec|
   spec.name = "rails_helper"
-  spec.version = "1.2.1"
+  spec.version = "2.0.0"
   spec.platform = Gem::Platform::RUBY
   spec.summary = "rails_helper"
   spec.description = "description: rails_helper kicks the ass"
+  spec.license = "Ruby"
 
   spec.files =
 ["README.md", "Rakefile", "lib", "lib/rails_helper.rb", "rails_helper.gemspec"]

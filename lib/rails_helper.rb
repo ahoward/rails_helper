@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '1.3.0'
+    '2.0.0'
   end
 
   def Helper.dependencies
@@ -10,50 +10,72 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     }
   end
 
-
-  attr_accessor 'options'
-  attr_accessor 'args'
-  attr_accessor 'block'
-  attr_accessor 'controller'
-  attr_accessor 'modules'
-
-  def initialize(*args, &block)
-    @options = args.extract_options!.to_options!
-    @args = args
-    @block = block
-
+  def Helper.new(*args, &block)
+    options = args.extract_options!.to_options!
     controllers, args = args.partition{|arg| ActionController::Base === arg}
+    controller = controllers.first || Helper.current_controller || Helper.mock_controller
 
-    @controller = controllers.first || Helper.current_controller || Helper.mock_controller
+    helpers = args
+    helpers.push(nil) if helpers.empty?
 
-    @modules = args
+    helpers.flatten!
+    helpers.uniq!
 
-    @controller = controller
-    @modules.push(nil) if @modules.empty?
-    @modules.flatten.uniq.each do |mod|
+    helpers.map! do |mod|
       case mod
         when NilClass, :all, 'all'
-          extend ::ActionView::Helpers
+          ::ActionView::Helpers
         when Module
-          extend mod
+          mod
         else
           raise ArgumentError, mod.class.name
       end
     end
+
+    view_class =
+      Class.new(self) do
+        helpers.each do |helper|
+          include helper
+        end
+        self.helpers = helpers
+      end
+
+    view_class.allocate.tap do |helper|
+      helper.send(:initialize, context=nil, assigns={}, controller, formats=nil)
+      helper
+    end
   end
 
-  ### see ./actionpack/test/controller/caching_test.rb OUCH!
+  attr_accessor 'controller'
+
+  if Helper.superclass == ::Object
+    def initialize(*args, &block)
+      :noop
+    end
+
+    def Helper.helpers=(*args)
+      :noop
+    end
+  end
+
+# see ./actionpack/test/controller/caching_test.rb OUCH!
+#
   def Helper.mock_controller
     require 'action_dispatch/testing/test_request.rb'
     require 'action_dispatch/testing/test_response.rb'
+
     store = ActiveSupport::Cache::MemoryStore.new
+
     controller = ApplicationController.new
     controller.perform_caching = true
     controller.cache_store = store
+
     request = ActionDispatch::TestRequest.new
     response = ActionDispatch::TestResponse.new
+
     controller.request = request
     controller.response = response
+
     controller.send(:default_url_options).merge!(DefaultUrlOptions) if defined?(DefaultUrlOptions)
     controller
   end
