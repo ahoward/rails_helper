@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '2.0.0'
+    '2.1.0'
   end
 
   def Helper.dependencies
@@ -15,27 +15,35 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     controllers, args = args.partition{|arg| ActionController::Base === arg}
     controller = controllers.first || Helper.current_controller || Helper.mock_controller
 
+    controller_class = controller.send(:class)
+
     helpers = args
     helpers.push(nil) if helpers.empty?
 
     helpers.flatten!
     helpers.uniq!
 
-    helpers.map! do |mod|
+    modules = []
+
+    helpers.each do |mod|
       case mod
         when NilClass, :all, 'all'
-          ::ActionView::Helpers
+          controller_class.send(:all_application_helpers).each do |name|
+            file_name  = name.to_s.underscore + '_helper'
+            mod = file_name.camelize.constantize
+            modules.push(mod)
+          end
         when Module
-          mod
+          modules.push(mod)
         else
-          raise ArgumentError, mod.class.name
+          raise(ArgumentError, mod.inspect)
       end
     end
 
     view_class =
       Class.new(self) do
-        helpers.each do |helper|
-          include helper
+        modules.each do |mod|
+          include mod
         end
         self.helpers = helpers
       end
