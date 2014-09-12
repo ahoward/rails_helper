@@ -3,7 +3,7 @@
 
 Gem::Specification::new do |spec|
   spec.name = "rails_helper"
-  spec.version = "2.1.0"
+  spec.version = "2.2.0"
   spec.platform = Gem::Platform::RUBY
   spec.summary = "rails_helper"
   spec.description = "description: rails_helper kicks the ass"

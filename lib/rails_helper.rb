@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '2.1.0'
+    '2.2.0'
   end
 
   def Helper.dependencies
@@ -84,7 +84,7 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     controller.request = request
     controller.response = response
 
-    controller.send(:default_url_options).merge!(DefaultUrlOptions) if defined?(DefaultUrlOptions)
+    controller.send(:default_url_options).dup.merge(DefaultUrlOptions.dup) if defined?(DefaultUrlOptions)
     controller
   end
 
