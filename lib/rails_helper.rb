@@ -89,7 +89,7 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   end
 
   def Helper.mock_controller_class
-    unless const_defind?(:Controller)
+    unless const_defined?(:Controller)
       controller_class =
         if defined?(::ApplicationController)
           Class.new(::ApplicationController)
