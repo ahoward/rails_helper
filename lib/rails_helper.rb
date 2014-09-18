@@ -1,6 +1,6 @@
 class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
   def Helper.version
-    '2.2.0'
+    '2.2.2'
   end
 
   def Helper.dependencies
@@ -74,7 +74,7 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
 
     store = ActiveSupport::Cache::MemoryStore.new
 
-    controller = ApplicationController.new
+    controller = mock_controller_class.new
     controller.perform_caching = true
     controller.cache_store = store
 
@@ -84,8 +84,21 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     controller.request = request
     controller.response = response
 
-    controller.send(:default_url_options).dup.merge(DefaultUrlOptions.dup) if defined?(DefaultUrlOptions)
+    controller.send(:default_url_options).merge!(DefaultUrlOptions) if defined?(DefaultUrlOptions)
     controller
+  end
+
+  def Helper.mock_controller_class
+    unless const_defind?(:Controller)
+      controller_class =
+        if defined?(::ApplicationController)
+          Class.new(::ApplicationController)
+        else
+          Class.new(::ActionController::Base)
+        end
+      const_set(:Controller, controller_class)
+    end
+    return const_get(:Controller)
   end
 
   def Helper.current_controller
