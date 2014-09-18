@@ -69,6 +69,8 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
 # see ./actionpack/test/controller/caching_test.rb OUCH!
 #
   def Helper.mock_controller
+    require 'rails'
+    require 'action_controller'
     require 'action_dispatch/testing/test_request.rb'
     require 'action_dispatch/testing/test_response.rb'
 
@@ -84,7 +86,19 @@ class Helper < (defined?(ActionView::Base) ? ActionView::Base : Object)
     controller.request = request
     controller.response = response
 
-    controller.send(:default_url_options).merge!(DefaultUrlOptions) if defined?(DefaultUrlOptions)
+    singleton_class =
+      class << controller
+        self
+      end
+
+    singleton_class.module_eval do
+      define_method(:default_url_options) do
+        @default_url_options ||= (
+          defined?(DefaultUrlOptions) ? DefaultUrlOptions.dup : {}
+        )
+      end
+    end
+
     controller
   end
 
