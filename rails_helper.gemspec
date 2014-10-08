@@ -6,7 +6,7 @@ Gem::Specification::new do |spec|
   spec.version = "2.2.2"
   spec.platform = Gem::Platform::RUBY
   spec.summary = "rails_helper"
-  spec.description = "description: rails_helper kicks the ass"
+  spec.description = "helper = Helper.new and helper.link_to(:foo)"
   spec.license = "Ruby"
 
   spec.files =
